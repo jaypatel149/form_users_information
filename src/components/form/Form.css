@@ -11,7 +11,7 @@ form {
   justify-content: center;
   width: 100%;
   max-width: 600px;
-  padding: 4rem;
+  padding: 3rem;
   background-color: #fff;
   border-radius: 0.5rem;
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
@@ -92,4 +92,8 @@ button[type="submit"] {
 
 button[type="submit"]:hover {
   background-color: #0065b8;
+}
+
+.error{
+  color: red;
 }

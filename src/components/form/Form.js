@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./Form.css";
 import Table from "../table/Table";
+import { toast } from "react-toastify";
 
 const Form = () => {
   const [formData, setFormData] = useState({
@@ -12,11 +13,64 @@ const Form = () => {
   });
 
   const [tableData, setTableData] = useState([]);
+  const [nameError, setNameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [phoneNumberError, setPhoneNumberError] = useState("");
+  const [dateOfBirthError, setDateOfBirthError] = useState("");
+
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.name) {
+      errors.name = "Name is required";
+    }
+    if (!formData.email) {
+      errors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      errors.email = "Email is invalid";
+    }
+    if (!formData.password) {
+      errors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      errors.password = "Password must be at least 6 characters";
+    }
+    if (!formData.phoneNumber) {
+      errors.phoneNumber = "Phone number is required";
+    } else if (!/^\d{10}$/.test(formData.phoneNumber)) {
+      errors.phoneNumber = "Phone number is invalid";
+    }
+    if (!formData.dateOfBirth) {
+      errors.dateOfBirth = "Date of birth is required";
+    }
+    setNameError(errors.name || "");
+    setEmailError(errors.email || "");
+    setPasswordError(errors.password || "");
+    setPhoneNumberError(errors.phoneNumber || "");
+    setDateOfBirthError(errors.dateOfBirth || "");
+    return errors;
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setTableData([...tableData, formData]);
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      Object.values(errors).forEach((error) => {
+        console.error(error);
+      });
+    } else {
+      setTableData([...tableData, formData]);
+      toast.success("Form submitted successfully!");
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+        phoneNumber: "",
+        dateOfBirth: "",
+      });
+      event.target.reset();
+    }
   };
+
 
   const handleChange = (event) => {
     setFormData({
@@ -24,7 +78,6 @@ const Form = () => {
       [event.target.name]: event.target.value,
     });
   };
-
 
   return (
     <div className="card">
@@ -38,6 +91,7 @@ const Form = () => {
             placeholder="Enter your name"
             onChange={handleChange}
           />
+           {nameError && <span className="error">{nameError}</span>}
         </div>
         <div className="form-group">
           <label htmlFor="email">Email:</label>
@@ -48,6 +102,7 @@ const Form = () => {
             placeholder="Enter your email"
             onChange={handleChange}
           />
+           {emailError && <span className="error">{emailError}</span>}
         </div>
         <div className="form-group">
           <label htmlFor="password">Password:</label>
@@ -58,6 +113,7 @@ const Form = () => {
             placeholder="Enter your password"
             onChange={handleChange}
           />
+          {passwordError && <span className="error">{passwordError}</span>}
         </div>
         <div className="form-group">
           <label htmlFor="phoneNumber">Phone Number:</label>
@@ -75,6 +131,7 @@ const Form = () => {
               onChange={handleChange}
             />
           </div>
+            {phoneNumberError && <span className="error">{phoneNumberError}</span>}
         </div>
         <div className="form-group">
           <label htmlFor="dateOfBirth">Date of Birth:</label>
@@ -85,10 +142,11 @@ const Form = () => {
             placeholder="Enter your date of birth"
             onChange={handleChange}
           />
+          {dateOfBirthError && <span className="error">{dateOfBirthError}</span>}
         </div>
         <button type="submit">Submit</button>
       </form>
-      <Table tableData={tableData}/>
+      <Table tableData={tableData} />
     </div>
   );
 };
